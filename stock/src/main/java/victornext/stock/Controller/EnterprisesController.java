@@ -48,4 +48,10 @@ public class EnterprisesController {
     public ResponseEntity<Object> findById(@PathVariable(value = "id") Long id){
         return service.findById(id);
     }
+
+    @DeleteMapping(value = "delete/{id}")
+    public ResponseEntity<?> Delete(@PathVariable (value = "id") Long id) {
+        return service.delete(id);
+    }
+
 }

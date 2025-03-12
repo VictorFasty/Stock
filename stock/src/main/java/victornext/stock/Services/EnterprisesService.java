@@ -50,4 +50,14 @@ public class EnterprisesService {
     }
 
 
+    public ResponseEntity<?> delete(Long id) {
+        ResponseEntity<Object> response = findById(id);
+
+        if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Enterprise not found for deletion");
+        }
+
+        repository.deleteById(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Enterprise successfully deleted");
+    }
 }
