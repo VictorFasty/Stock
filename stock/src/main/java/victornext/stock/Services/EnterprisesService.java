@@ -60,4 +60,21 @@ public class EnterprisesService {
         repository.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Enterprise successfully deleted");
     }
+
+    public ResponseEntity<?> update(EnterprisesModel model) {
+        if (model.getId() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ID must not be null");
+        }
+        
+        Optional<EnterprisesModel> existingEnterprise = repository.findById(model.getId());
+
+        if (existingEnterprise.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Enterprise not found for update");
+        }
+
+        EnterprisesModel updatedEnterprise = repository.save(model);
+
+        return ResponseEntity.status(HttpStatus.OK).body(updatedEnterprise);
+    }
+
 }

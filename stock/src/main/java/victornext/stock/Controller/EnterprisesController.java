@@ -35,6 +35,15 @@ public class EnterprisesController {
     }
 
 
+    @PutMapping(value = "/update/{id}")
+    public ResponseEntity<?> update(@PathVariable(value = "id") Long id, @RequestBody @Valid EnterprisesDTO dto) {
+        EnterprisesModel model = mapper.toEntity(dto);
+        model.setId(id);
+
+        return service.update(model);
+    }
+
+
 
 
     @GetMapping(value = "/findall")
