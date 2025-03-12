@@ -1,0 +1,23 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# User-specific files
+.idea/*.user
+.idea/*.userWorkspace
+
+# Local configuration
+.idea/misc.xml
+.idea/modules.xml
+.idea/workspace.xml
+
+# Caches and other IntelliJ IDEA directories
+.idea/caches/
+.idea/libraries/
+.idea/scopes/
+.idea/shelf/
+
+# System-specific files
+*.swp
