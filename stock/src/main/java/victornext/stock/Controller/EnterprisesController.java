@@ -12,6 +12,7 @@ import victornext.stock.Services.EnterprisesService;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("Enterprises")
@@ -20,6 +21,7 @@ public class EnterprisesController {
 
     private final EnterprisesMapper mapper;
     private final EnterprisesService service;
+
 
 
 
@@ -35,6 +37,14 @@ public class EnterprisesController {
     }
 
 
+
+
+
+
+
+
+
+
     @PutMapping(value = "/update/{id}")
     public ResponseEntity<?> update(@PathVariable(value = "id") Long id, @RequestBody @Valid EnterprisesDTO dto) {
         EnterprisesModel model = mapper.toEntity(dto);
@@ -46,10 +56,20 @@ public class EnterprisesController {
 
 
 
+
+
+
+
+
     @GetMapping(value = "/findall")
     public ResponseEntity<List<EnterprisesModel>> findall() {
         return service.findAll();
     }
+
+
+
+
+
 
 
 
@@ -58,9 +78,25 @@ public class EnterprisesController {
         return service.findById(id);
     }
 
+
+
+
+
+
     @DeleteMapping(value = "delete/{id}")
     public ResponseEntity<?> Delete(@PathVariable (value = "id") Long id) {
         return service.delete(id);
     }
+
+
+
+    @GetMapping("/search/{name}")
+    public ResponseEntity<List<EnterprisesDTO>> search(@PathVariable("name") String name) {
+        List<EnterprisesModel> resultado = service.Search(name);
+        List<EnterprisesDTO> lista = resultado.stream()
+                .map(mapper::toDTO).collect(Collectors.toList());
+        return ResponseEntity.ok(lista);
+    }
+
 
 }

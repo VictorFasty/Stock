@@ -1,16 +1,15 @@
 package victornext.stock.Services;
 
-import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import victornext.stock.Model.EnterprisesModel;
 import victornext.stock.Repositories.EnterprisesRepository;
+import victornext.stock.Repositories.Specs.EnterprisesSpecs;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -26,6 +25,11 @@ public class EnterprisesService {
 
 
 
+
+
+
+
+
     public ResponseEntity<EnterprisesModel> Create(EnterprisesModel model) {
         EnterprisesModel savedEnterprise = repository.save(model);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedEnterprise);
@@ -34,9 +38,17 @@ public class EnterprisesService {
 
 
 
+
+
+
+
     public ResponseEntity<List<EnterprisesModel>> findAll(){
         return ResponseEntity.status(HttpStatus.OK).body(repository.findAll());
     }
+
+
+
+
 
 
 
@@ -50,6 +62,12 @@ public class EnterprisesService {
     }
 
 
+
+
+
+
+
+
     public ResponseEntity<?> delete(Long id) {
         ResponseEntity<Object> response = findById(id);
 
@@ -61,11 +79,17 @@ public class EnterprisesService {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Enterprise successfully deleted");
     }
 
+
+
+
+
+
+
     public ResponseEntity<?> update(EnterprisesModel model) {
         if (model.getId() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ID must not be null");
         }
-        
+
         Optional<EnterprisesModel> existingEnterprise = repository.findById(model.getId());
 
         if (existingEnterprise.isEmpty()) {
@@ -76,5 +100,21 @@ public class EnterprisesService {
 
         return ResponseEntity.status(HttpStatus.OK).body(updatedEnterprise);
     }
+
+
+    public List<EnterprisesModel> Search(String name) {
+        // Inicia a especificação com uma condição básica (sem filtro)
+        Specification<EnterprisesModel> specs = Specification.where((root, query, cb) -> cb.conjunction());
+
+        // Verifica se o nome foi passado para aplicar o filtro
+        if (name != null && !name.isEmpty()) {
+            specs = specs.and(EnterprisesSpecs.nameLike(name));  // Adiciona o filtro de nome
+        }
+
+        // Retorna todos os resultados filtrados pela especificação
+        return repository.findAll(specs);
+    }
+
+
 
 }
