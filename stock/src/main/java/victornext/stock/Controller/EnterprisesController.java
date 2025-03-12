@@ -2,6 +2,7 @@ package victornext.stock.Controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import victornext.stock.Controller.DTOS.EnterprisesDTO;
@@ -10,6 +11,7 @@ import victornext.stock.Model.EnterprisesModel;
 import victornext.stock.Services.EnterprisesService;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("Enterprises")
@@ -18,6 +20,11 @@ public class EnterprisesController {
 
     private final EnterprisesMapper mapper;
     private final EnterprisesService service;
+
+
+
+
+
 
     @PostMapping(value = "/create")
     public ResponseEntity<?> create(@RequestBody @Valid EnterprisesDTO dto) {
@@ -28,10 +35,17 @@ public class EnterprisesController {
     }
 
 
+
+
     @GetMapping(value = "/findall")
     public ResponseEntity<List<EnterprisesModel>> findall() {
         return service.findAll();
     }
 
 
+
+    @GetMapping(value = "/find/{id}")
+    public ResponseEntity<Object> findById(@PathVariable(value = "id") Long id){
+        return service.findById(id);
+    }
 }
