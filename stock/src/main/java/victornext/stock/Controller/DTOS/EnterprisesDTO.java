@@ -4,6 +4,6 @@ import jakarta.validation.constraints.NotBlank;
 
 public record EnterprisesDTO(
         Long id,
-        @NotBlank(message = "nome da empresa não pode estar vazio") String name
+        @NotBlank(message = "The enterprise field cannot be empty.") String name
 ) {
 }
