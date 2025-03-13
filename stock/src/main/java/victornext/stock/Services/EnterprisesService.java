@@ -1,5 +1,7 @@
 package victornext.stock.Services;
 
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -8,21 +10,16 @@ import org.springframework.stereotype.Service;
 import victornext.stock.Model.EnterprisesModel;
 import victornext.stock.Repositories.EnterprisesRepository;
 import victornext.stock.Repositories.Specs.EnterprisesSpecs;
+import victornext.stock.validators.EnterprisesValidator;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class EnterprisesService {
     private final EnterprisesRepository repository;
-
-
-    @Autowired
-    public EnterprisesService(EnterprisesRepository repository) {
-        this.repository = repository;
-    }
-
-
+    private final EnterprisesValidator validator;
 
 
 
@@ -31,6 +28,7 @@ public class EnterprisesService {
 
 
     public ResponseEntity<EnterprisesModel> Create(EnterprisesModel model) {
+        validator.validation(model);
         EnterprisesModel savedEnterprise = repository.save(model);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedEnterprise);
     }
@@ -86,6 +84,7 @@ public class EnterprisesService {
 
 
     public ResponseEntity<?> update(EnterprisesModel model) {
+        validator.validation(model);
         if (model.getId() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ID must not be null");
         }
