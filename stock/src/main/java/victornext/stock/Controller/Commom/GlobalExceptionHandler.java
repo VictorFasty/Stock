@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
         body.put("timestamp", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         body.put("status", HttpStatus.CONFLICT.value());
         body.put("error", "Conflict");
-        body.put("message", e.getMessage()); // CORRIGIDO: Removido ":" extra
+        body.put("message", e.getMessage()); 
 
         return new ResponseEntity<>(body, HttpStatus.CONFLICT);
     }
@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
         body.put("timestamp", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         body.put("status", HttpStatus.BAD_REQUEST.value());
         body.put("error", "Invalid field");
-        body.put("message", e.getMessage()); // CORRIGIDO: Removido ":" extra
+        body.put("message", e.getMessage());
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
