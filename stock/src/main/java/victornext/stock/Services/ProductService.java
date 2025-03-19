@@ -27,4 +27,12 @@ public class ProductService {
     }
 
 
+    public ResponseEntity<?> update(ProductModel model) {
+        ProductModel model1 = repository.save(model);
+
+        return ResponseEntity.status(HttpStatus.OK).body(model1);
+    }
+
+
+
 }

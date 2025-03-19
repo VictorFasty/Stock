@@ -2,12 +2,10 @@ package victornext.stock.Controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import victornext.stock.Controller.DTOS.ProductDTO;
 import victornext.stock.Controller.Mappers.ProductMapper;
 import victornext.stock.Model.EnterprisesModel;
@@ -33,6 +31,15 @@ public class ProductController {
 
         // Retornando o modelo salvo com status 201 (CREATED)
         return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
+    }
+
+
+    @PutMapping(value = "/update/{id}")
+    ResponseEntity<?> update(@PathVariable(value = "id") Long id, @RequestBody @Valid ProductDTO DTO) {
+        ProductModel model = mapper.toEntity(DTO);
+        model.setId(id);
+
+        return service.update(model);
     }
 
 }
