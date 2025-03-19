@@ -11,6 +11,8 @@ import victornext.stock.Controller.Mappers.ProductMapper;
 import victornext.stock.Model.ProductModel;
 import victornext.stock.Repositories.ProductRepository;
 
+import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -34,9 +36,21 @@ public class ProductService {
     }
 
 
-    public ResponseEntity<?> delete(Long id) {
-        repository.deleteById(id);
+    public ResponseEntity<String> delete(Long id) {
+        Optional<ProductModel> productOptional = repository.findById(id);
 
-        return ResponseEntity.status(HttpStatus.OK).body(id);
+        if (productOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found for deletion");
+        }
+
+        repository.deleteById(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Product successfully deleted");
+    }
+
+
+    public ResponseEntity<Object> findById(Long id) {
+        repository.findById(id);
+
+        return ResponseEntity.status(HttpStatus.OK).body(repository.findById(id));
     }
 }
