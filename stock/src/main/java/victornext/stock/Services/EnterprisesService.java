@@ -102,15 +102,14 @@ public class EnterprisesService {
 
 
     public List<EnterprisesModel> Search(String name) {
-        // Inicia a especificação com uma condição básica (sem filtro)
         Specification<EnterprisesModel> specs = Specification.where((root, query, cb) -> cb.conjunction());
 
-        // Verifica se o nome foi passado para aplicar o filtro
+
         if (name != null && !name.isEmpty()) {
-            specs = specs.and(EnterprisesSpecs.nameLike(name));  // Adiciona o filtro de nome
+            specs = specs.and(EnterprisesSpecs.nameLike(name));
         }
 
-        // Retorna todos os resultados filtrados pela especificação
+
         return repository.findAll(specs);
     }
 

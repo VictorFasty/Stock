@@ -3,14 +3,19 @@ package victornext.stock.Services;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import victornext.stock.Controller.Mappers.ProductMapper;
+import victornext.stock.Model.EnterprisesModel;
 import victornext.stock.Model.ProductModel;
 import victornext.stock.Repositories.ProductRepository;
+import victornext.stock.Repositories.Specs.EnterprisesSpecs;
+import victornext.stock.Repositories.Specs.ProductSpecs;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -53,4 +58,20 @@ public class ProductService {
 
         return ResponseEntity.status(HttpStatus.OK).body(repository.findById(id));
     }
+
+
+
+    public List<ProductModel> Search(String name) {
+        Specification<ProductModel> specs = Specification.where((root, query, cb) -> cb.conjunction()); // Inicia com uma condição vazia
+
+        if (name != null && !name.isEmpty()) {
+            System.out.println("Aplicando filtro para nome: " + name); // Log de depuração
+            specs = specs.and(ProductSpecs.nameLike(name)); // Adiciona o filtro de nome
+        }
+
+
+        return repository.findAll(specs); // Busca todos os produtos com a Specification aplicada
+    }
+
+
 }
