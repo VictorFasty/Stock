@@ -42,4 +42,10 @@ public class ProductController {
         return service.update(model);
     }
 
+
+
+    @DeleteMapping(value = "/delete/{id}")
+    ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
+        return service.delete(id);
+    }
 }

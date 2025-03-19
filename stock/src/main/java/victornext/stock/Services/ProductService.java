@@ -34,5 +34,9 @@ public class ProductService {
     }
 
 
+    public ResponseEntity<?> delete(Long id) {
+        repository.deleteById(id);
 
+        return ResponseEntity.status(HttpStatus.OK).body(id);
+    }
 }
