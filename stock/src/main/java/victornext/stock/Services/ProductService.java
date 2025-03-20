@@ -55,6 +55,7 @@ public class ProductService {
 
 
     public ResponseEntity<Object> findById(Long id) {
+        validator.validateId(id);
         repository.findById(id);
 
         return ResponseEntity.status(HttpStatus.OK).body(repository.findById(id));
@@ -63,16 +64,13 @@ public class ProductService {
 
 
     public List<ProductModel> Search(String name) {
-        Specification<ProductModel> specs = Specification.where((root, query, cb) -> cb.conjunction()); // Inicia com uma condição vazia
+        validator.validateSearchName(name); // Valida antes de prosseguir
 
-        if (name != null && !name.isEmpty()) {
-            System.out.println("Aplicando filtro para nome: " + name); // Log de depuração
-            specs = specs.and(ProductSpecs.nameLike(name)); // Adiciona o filtro de nome
-        }
-
+        Specification<ProductModel> specs = Specification.where(ProductSpecs.nameLike(name)); // Aplica filtro diretamente
 
         return repository.findAll(specs); // Busca todos os produtos com a Specification aplicada
     }
+
 
 
 }

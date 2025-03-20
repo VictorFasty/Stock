@@ -29,7 +29,17 @@ public class ProductValidator {
             }
         }
 
-        public boolean isIdInvalid(Long id) {
+
+
+        public void validateSearchName(String name) {
+            if (name == null || name.isEmpty()) {
+                throw new NotFoundException("O nome para pesquisa não pode ser vazio ou nulo.");
+            }
+        }
+
+
+
+    public boolean isIdInvalid(Long id) {
             return repository.findById(id).isEmpty(); // Retorna true se o ID não existir
         }
 
