@@ -14,6 +14,7 @@ import victornext.stock.Model.ProductModel;
 import victornext.stock.Repositories.ProductRepository;
 import victornext.stock.Repositories.Specs.EnterprisesSpecs;
 import victornext.stock.Repositories.Specs.ProductSpecs;
+import victornext.stock.validators.ProductValidator;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,18 +24,23 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository repository;
+    private final ProductValidator validator;
 
 
 
 
-    public ResponseEntity<ProductModel> create(ProductModel product) {
-        // Salvando o produto no banco de dados
-        ProductModel savedProduct = repository.save(product);
+    public ResponseEntity<ProductModel> create(ProductModel model) {
+        //validation
+        validator.ValidatorALL(model);
+        // save
+        ProductModel savedProduct = repository.save(model);
+        //return http status code
         return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
     }
 
 
     public ResponseEntity<?> update(ProductModel model) {
+        validator.ValidatorALL(model);
         ProductModel model1 = repository.save(model);
 
         return ResponseEntity.status(HttpStatus.OK).body(model1);
@@ -42,12 +48,7 @@ public class ProductService {
 
 
     public ResponseEntity<String> delete(Long id) {
-        Optional<ProductModel> productOptional = repository.findById(id);
-
-        if (productOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found for deletion");
-        }
-
+        validator.validateId(id);
         repository.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Product successfully deleted");
     }
