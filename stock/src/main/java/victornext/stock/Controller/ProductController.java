@@ -29,13 +29,11 @@ public class ProductController {
 
     @PostMapping(value = "/create")
     ResponseEntity<?> create(@RequestBody @Valid ProductDTO dto) {
-        // Mapeando o DTO para o modelo
         ProductModel model = mapper.toEntity(dto);
 
-        // Chamando o serviço para salvar o modelo no banco de dados
         ResponseEntity<?> savedProduct = service.create(model);
 
-        // Retornando o modelo salvo com status 201 (CREATED)
+        //  201 (CREATED)
         return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
     }
 
