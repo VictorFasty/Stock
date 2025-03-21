@@ -27,6 +27,8 @@ public class EnterprisesService {
 
 
 
+
+
     public ResponseEntity<EnterprisesModel> Create(EnterprisesModel model) {
         validator.validation(model);
         EnterprisesModel savedEnterprise = repository.save(model);
@@ -51,11 +53,8 @@ public class EnterprisesService {
 
 
     public ResponseEntity<Object> findById(Long id) {
+        validator.validateId(id);
         Optional<EnterprisesModel> enterprise = repository.findById(id);
-        if(enterprise.isEmpty()){
-            System.out.println("Not found !");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ERROR");
-        }
         return ResponseEntity.status(HttpStatus.OK).body(repository.findById(id));
     }
 
@@ -67,12 +66,8 @@ public class EnterprisesService {
 
 
     public ResponseEntity<?> delete(Long id) {
+        validator.validateId(id);
         ResponseEntity<Object> response = findById(id);
-
-        if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Enterprise not found for deletion");
-        }
-
         repository.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Enterprise successfully deleted");
     }
@@ -85,31 +80,14 @@ public class EnterprisesService {
 
     public ResponseEntity<?> update(EnterprisesModel model) {
         validator.validation(model);
-        if (model.getId() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ID must not be null");
-        }
-
-        Optional<EnterprisesModel> existingEnterprise = repository.findById(model.getId());
-
-        if (existingEnterprise.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Enterprise not found for update");
-        }
-
         EnterprisesModel updatedEnterprise = repository.save(model);
-
         return ResponseEntity.status(HttpStatus.OK).body(updatedEnterprise);
     }
 
 
     public List<EnterprisesModel> Search(String name) {
+        validator.validateSearchName(name);
         Specification<EnterprisesModel> specs = Specification.where((root, query, cb) -> cb.conjunction());
-
-
-        if (name != null && !name.isEmpty()) {
-            specs = specs.and(EnterprisesSpecs.nameLike(name));
-        }
-
-
         return repository.findAll(specs);
     }
 
