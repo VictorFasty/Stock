@@ -38,17 +38,9 @@ public class EnterprisesService {
 
 
 
-
-
-
-
     public ResponseEntity<List<EnterprisesModel>> findAll(){
         return ResponseEntity.status(HttpStatus.OK).body(repository.findAll());
     }
-
-
-
-
 
 
 
@@ -61,19 +53,12 @@ public class EnterprisesService {
 
 
 
-
-
-
-
     public ResponseEntity<?> delete(Long id) {
         validator.validateId(id);
         ResponseEntity<Object> response = findById(id);
         repository.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Enterprise successfully deleted");
     }
-
-
-
 
 
 
