@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import victornext.stock.Controller.Mappers.ProductMapper;
+import victornext.stock.Exceptions.NotFoundException;
 import victornext.stock.Model.EnterprisesModel;
 import victornext.stock.Model.ProductModel;
 import victornext.stock.Repositories.ProductRepository;
@@ -75,7 +76,7 @@ public class ProductService {
     public ResponseEntity<Object> AdditionProduct(Long id, Integer quantity) {
         validator.validateId(id);
         ProductModel model = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found!!"));
+                .orElseThrow(() -> new NotFoundException("Product not found!!"));
 
         Integer stock = model.getQuantity();
         model.setQuantity(stock + quantity);
@@ -88,7 +89,7 @@ public class ProductService {
     public ResponseEntity<Object> RemoveProduct(Long id, Integer quantity) {
         validator.validateId(id);
         ProductModel model = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found!!"));
+                .orElseThrow(() -> new NotFoundException("Product not found!!"));
 
         Integer stock = model.getQuantity();
 
