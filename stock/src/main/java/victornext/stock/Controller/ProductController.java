@@ -74,11 +74,19 @@ public class ProductController {
     }
 
 
-    @GetMapping("/{id}/{quantity}")
+    @PutMapping("A/{id}/{quantity}")
     public ResponseEntity<Object> AdditionQuantity(
             @PathVariable(value = "id") Long id,
             @PathVariable(value = "quantity") Integer quantity
     ) {
         return service.AdditionProduct(id, quantity);
+    }
+
+    @PutMapping("R/{id}/{quantity}")
+    public ResponseEntity<Object> RemoveQuantity(
+            @PathVariable(value = "id") Long id,
+            @PathVariable(value = "quantity") Integer quantity
+    ) {
+        return service.RemoveProduct(id, quantity);
     }
 }

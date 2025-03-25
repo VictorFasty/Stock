@@ -84,4 +84,22 @@ public class ProductService {
         return ResponseEntity.ok(model);
 
     }
+
+    public ResponseEntity<Object> RemoveProduct(Long id, Integer quantity) {
+        validator.validateId(id);
+        ProductModel model = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found!!"));
+
+        Integer stock = model.getQuantity();
+
+        if (stock < quantity) {
+            return ResponseEntity.badRequest().body("Error: Insufficient quantity in stock!");
+        }
+
+        model.setQuantity(stock - quantity);
+
+        repository.save(model);
+        return ResponseEntity.ok(model);
+
+    }
 }
