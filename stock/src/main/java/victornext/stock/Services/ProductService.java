@@ -72,5 +72,16 @@ public class ProductService {
     }
 
 
+    public ResponseEntity<Object> AdditionProduct(Long id, Integer quantity) {
+        validator.validateId(id);
+        ProductModel model = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found!!"));
 
+        Integer stock = model.getQuantity();
+        model.setQuantity(stock + quantity);
+
+        repository.save(model);
+        return ResponseEntity.ok(model);
+
+    }
 }

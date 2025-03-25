@@ -16,6 +16,7 @@ import victornext.stock.Services.ProductService;
 import victornext.stock.Model.ProductModel;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -72,4 +73,12 @@ public class ProductController {
         return ResponseEntity.ok(dtoResults);
     }
 
+
+    @GetMapping("/{id}/{quantity}")
+    public ResponseEntity<Object> AdditionQuantity(
+            @PathVariable(value = "id") Long id,
+            @PathVariable(value = "quantity") Integer quantity
+    ) {
+        return service.AdditionProduct(id, quantity);
+    }
 }
