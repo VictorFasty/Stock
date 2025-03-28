@@ -67,18 +67,16 @@ public class ProductService {
 
 
     public List<ProductModel> Search(String name, Integer page, Integer pageSize) {
-        validator.validateSearchName(name); // Valida antes de prosseguir
+        validator.validateSearchName(name); 
 
-        // Aplica o filtro da Specification
+
         Specification<ProductModel> specs = Specification.where(ProductSpecs.nameLike(name));
 
-        // Cria o Pageable com base na página e no tamanho
+
         Pageable pageRequest = PageRequest.of(page, pageSize);
 
-        // Obtém a Page e converte para List
         Page<ProductModel> pageResult = repository.findAll(specs, pageRequest);
 
-        // Retorna os resultados como uma lista
         return pageResult.getContent();
     }
 
