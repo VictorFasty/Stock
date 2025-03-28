@@ -49,29 +49,27 @@ public class EnterprisesValidator {
     }
 
     public boolean isIdInvalid(Long id) {
-        return repository.findById(id).isEmpty(); // Retorna true se o ID não existir
+        return repository.findById(id).isEmpty();
     }
 
 
 
     private boolean existEnterprise(EnterprisesModel model) {
         if (model.getName() == null) {
-            return false; // Nome nulo não deve indicar duplicidade
+            return false;
         }
 
         Optional<EnterprisesModel> enterpriseFound = repository.findByName(model.getName());
 
         if (enterpriseFound.isEmpty()) {
-            return false; // Se não encontrou nenhuma empresa, retorna falso
+            return false;
         }
 
-        // Se estiver cadastrando uma nova empresa (ID nulo), basta verificar se já existe uma com o mesmo nome
         if (model.getId() == null) {
             return true;
         }
 
-        // Se encontrou uma empresa com o mesmo nome, verifica se o ID é diferente
         return !enterpriseFound.get().getId().equals(model.getId());
-
     }
+
 }

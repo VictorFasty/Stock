@@ -3,6 +3,7 @@ package victornext.stock.Controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import victornext.stock.Controller.DTOS.EnterprisesDTO;
@@ -91,10 +92,15 @@ public class EnterprisesController {
 
 
     @GetMapping("/search/{name}")
-    public ResponseEntity<List<EnterprisesDTO>> search(@PathVariable("name") String name) {
-        List<EnterprisesModel> resultado = service.Search(name);
-        List<EnterprisesDTO> lista = resultado.stream()
-                .map(mapper::toDTO).collect(Collectors.toList());
+    public ResponseEntity<Page<EnterprisesDTO>> search(
+            @PathVariable("name") String name,
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "pageSize", defaultValue = "1") Integer pageSize,
+            @RequestParam(value = "sort", defaultValue = "name,asc") String sort
+    )
+    {
+        Page<EnterprisesModel> resultado = service.Search(name, page, pageSize);
+        Page<EnterprisesDTO> lista = resultado.map(mapper::toDTO);
         return ResponseEntity.ok(lista);
     }
 

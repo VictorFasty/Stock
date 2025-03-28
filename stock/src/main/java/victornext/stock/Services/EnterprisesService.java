@@ -3,6 +3,9 @@ package victornext.stock.Services;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -70,11 +73,22 @@ public class EnterprisesService {
     }
 
 
-    public List<EnterprisesModel> Search(String name) {
+    public Page<EnterprisesModel> Search(String name, Integer page, Integer pageSize) {
+        // validator
         validator.validateSearchName(name);
-        Specification<EnterprisesModel> specs = Specification.where((root, query, cb) -> cb.conjunction());
-        return repository.findAll(specs);
+
+        Specification<EnterprisesModel> specs = (root, query, cb) -> {
+            if (name != null && !name.isEmpty()) {
+                return cb.like(cb.lower(root.get("name")), "%" + name.toLowerCase() + "%");
+            }
+            return cb.conjunction();
+        };
+
+        Pageable pageRequest = PageRequest.of(page, pageSize);
+
+        return repository.findAll(specs, pageRequest); // Usando findAll com Specification
     }
+
 
 
 
