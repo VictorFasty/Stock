@@ -63,9 +63,12 @@ public class ProductController {
 
     @GetMapping("/search/{name}")
     public ResponseEntity<List<FindEnterpriseDTO>> search(
-            @PathVariable(value = "name") String name) {
+            @PathVariable(value = "name") String name,
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "pageSize", defaultValue = "1") Integer pageSize,
+            @RequestParam(value = "sort", defaultValue = "name,asc") String sort) {
 
-        List<ProductModel> searchResults = service.Search(name);
+        List<ProductModel> searchResults = service.Search(name, page, pageSize);
         List<FindEnterpriseDTO> dtoResults = searchResults.stream()
                 .map(mapper::toDTO)
                 .toList();

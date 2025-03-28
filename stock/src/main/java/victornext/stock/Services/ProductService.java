@@ -3,6 +3,9 @@ package victornext.stock.Services;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -63,13 +66,20 @@ public class ProductService {
     }
 
 
-
-    public List<ProductModel> Search(String name) {
+    public List<ProductModel> Search(String name, Integer page, Integer pageSize) {
         validator.validateSearchName(name); // Valida antes de prosseguir
 
-        Specification<ProductModel> specs = Specification.where(ProductSpecs.nameLike(name)); // Aplica filtro diretamente
+        // Aplica o filtro da Specification
+        Specification<ProductModel> specs = Specification.where(ProductSpecs.nameLike(name));
 
-        return repository.findAll(specs); // Busca todos os produtos com a Specification aplicada
+        // Cria o Pageable com base na página e no tamanho
+        Pageable pageRequest = PageRequest.of(page, pageSize);
+
+        // Obtém a Page e converte para List
+        Page<ProductModel> pageResult = repository.findAll(specs, pageRequest);
+
+        // Retorna os resultados como uma lista
+        return pageResult.getContent();
     }
 
 
