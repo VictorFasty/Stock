@@ -1,15 +1,13 @@
 package victornext.stock.Model;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
 
+@Entity
 @Table(name= "users")
 @Getter
 @Setter
@@ -18,7 +16,10 @@ import org.springframework.stereotype.Service;
 public class UserModel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private String id;
+    private Long id;
+
+
+
     private String name;
     private String email;
     private String password;

@@ -22,3 +22,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+api:
+  security:
+    token:
+      secret: ${API_SECURITY_TOKEN_SECRET}
