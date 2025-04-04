@@ -30,18 +30,26 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(
-                                "/v2/api-docs/**",
-                                "/v3/api-docs/**",
-                                "/swagger=resources/**",
-                                "/swagger-ui.html",
-                                "/swagger-ui/**",
-                                "/webjars/**" ).permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                        .requestMatchers("/v2/api-docs/**", "/v3/api-docs/**", "/swagger-resources/**",
+                                "/swagger-ui.html", "/swagger-ui/**", "/webjars/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/auth/login", "/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/register").permitAll()
+                        .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
+                .formLogin(login -> login
+                        .loginPage("/auth/login") // Página personalizada de login
+                        .loginProcessingUrl("/login") // URL onde o formulário envia os dados
+                        .defaultSuccessUrl("/", true) // Redirecionamento após login bem-sucedido
+                        .failureUrl("/auth/login?error=true") // Redirecionamento em caso de falha
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/auth/login?logout=true")
+                        .permitAll()
+                );
+
         return http.build();
     }
 
