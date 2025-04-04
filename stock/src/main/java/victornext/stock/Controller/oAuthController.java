@@ -1,21 +1,19 @@
 package victornext.stock.Controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import victornext.stock.Controller.DTOS.LoginRequestDTO;
 import victornext.stock.Controller.DTOS.RegisterRequestDTO;
+import victornext.stock.Controller.DTOS.ResponseDTO;
 import victornext.stock.Model.UserModel;
 import victornext.stock.Repositories.UserRepository;
 import victornext.stock.infra.security.TokenService;
 
 import java.util.Optional;
 
-@Controller
+@RestController // Retorna JSON ao invés de páginas HTML
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class oAuthController {
@@ -24,49 +22,32 @@ public class oAuthController {
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
-    @GetMapping("/login")
-    public String loginPage() {
-        return "login";
-    }
-
-
     @PostMapping("/login")
-    public String login(LoginRequestDTO body, Model model) {
+    public ResponseEntity<?> login(@RequestBody LoginRequestDTO body) {
         UserModel user = repository.findByEmail(body.email()).orElse(null);
 
         if (user != null && passwordEncoder.matches(body.password(), user.getPassword())) {
             String token = tokenService.generateToken(user);
-            model.addAttribute("name", user.getName());
-            model.addAttribute("token", token);
-            return "home"; 
+            return ResponseEntity.ok(new ResponseDTO(user.getName(), token));
         }
 
-        model.addAttribute("error", "Invalid credentials!");
-        return "login";
+        return ResponseEntity.status(401).body("Invalid credentials");
     }
 
-
-
-    @GetMapping("/register")
-    public String registerPage() {
-        return "register";
-    }
     @PostMapping("/register")
-    public String register(RegisterRequestDTO body, Model model) {
+    public ResponseEntity<?> register(@RequestBody RegisterRequestDTO body) {
         Optional<UserModel> existingUser = repository.findByEmail(body.email());
 
-        if (existingUser.isEmpty()) {
-            UserModel newUser = new UserModel();
-            newUser.setPassword(passwordEncoder.encode(body.password()));
-            newUser.setEmail(body.email());
-            newUser.setName(body.name());
-            repository.save(newUser);
-
-            model.addAttribute("message", "Registration completed successfully!");
-            return "login";
+        if (existingUser.isPresent()) {
+            return ResponseEntity.status(400).body("User already exists!");
         }
 
-        model.addAttribute("error", "The user exists !");
-        return "register";
+        UserModel newUser = new UserModel();
+        newUser.setPassword(passwordEncoder.encode(body.password()));
+        newUser.setEmail(body.email());
+        newUser.setName(body.name());
+        repository.save(newUser);
+
+        return ResponseEntity.ok("Registration completed successfully!");
     }
 }

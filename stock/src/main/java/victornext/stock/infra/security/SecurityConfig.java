@@ -18,11 +18,13 @@ import org.springframework.stereotype.Component;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
+    private final SecurityFilter securityFilter;
 
-    @Autowired
-    SecurityFilter securityFilter;
+    public SecurityConfig(CustomUserDetailsService userDetailsService, SecurityFilter securityFilter) {
+        this.userDetailsService = userDetailsService;
+        this.securityFilter = securityFilter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -37,18 +39,12 @@ public class SecurityConfig {
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin(login -> login
-                        .loginPage("/auth/login") // Página personalizada de login
-                        .loginProcessingUrl("/login") // URL onde o formulário envia os dados
-                        .defaultSuccessUrl("/", true) // Redirecionamento após login bem-sucedido
-                        .failureUrl("/auth/login?error=true") // Redirecionamento em caso de falha
-                        .permitAll()
-                )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/auth/login?logout=true")
                         .permitAll()
-                );
+                )
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class); // Adicionando filtro de segurança
 
         return http.build();
     }
