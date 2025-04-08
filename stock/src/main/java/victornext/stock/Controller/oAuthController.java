@@ -13,7 +13,7 @@ import victornext.stock.infra.security.TokenService;
 
 import java.util.Optional;
 
-@RestController // Retorna JSON ao invés de páginas HTML
+@RestController 
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class oAuthController {
