@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import victornext.stock.Controller.DTOS.LoginRequestDTO;
 import victornext.stock.Controller.DTOS.RegisterRequestDTO;
 import victornext.stock.Controller.DTOS.ResponseDTO;
+import victornext.stock.Enums.UserRoles;
 import victornext.stock.Model.UserModel;
 import victornext.stock.Repositories.UserRepository;
 import victornext.stock.infra.security.TokenService;
@@ -25,32 +26,49 @@ import java.util.Optional;
 public class oAuthController {
 
 
-    private AuthenticationManager auhtenAuthenticationManager;
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
+
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO body) {
-        var usernamePassword = new UsernamePasswordAuthenticationToken(body.email(), body.password());
-        var auth = this.auhtenAuthenticationManager.authenticate(usernamePassword);
+  
+        UserModel user = this.repository.findByEmail(body.email())
+                .orElseThrow(() -> new RuntimeException("User not found!"));
 
-        var token = tokenService.generateToken((UserModel) auth.getPrincipal());
 
-        return ResponseEntity.ok(new ResponseDTO(token));
+        if (passwordEncoder.matches(body.password(), user.getPassword())) {
+            String token = this.tokenService.generateToken(user);
+            return ResponseEntity.ok(new ResponseDTO(user.getName(), token));
+        }
+
+        return ResponseEntity.badRequest().body("Invalid credentials");
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequestDTO body) {
-        if(repository.findByEmail(body.email()).isEmpty()) {
-            return ResponseEntity.badRequest().build();
+
+        Optional<UserModel> user = this.repository.findByEmail(body.email());
+        if (user.isEmpty()) {
+            UserModel newUser = new UserModel();
+            newUser.setName(body.name());
+            newUser.setEmail(body.email());
+            newUser.setPassword(passwordEncoder.encode(body.password()));
+
+            try {
+                newUser.setRole(body.role());
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest().body("Invalid role provided");
+            }
+
+            this.repository.save(newUser);
+
+            String token = this.tokenService.generateToken(newUser);
+            return ResponseEntity.ok(new ResponseDTO(newUser.getName(), token));
         }
 
-        String encryptedPassword = new BCryptPasswordEncoder().encode(body.password());
-        UserModel newUser = new UserModel(body.name(), body.email(), encryptedPassword, body.role());
-
-        repository.save(newUser);
-
-        return ResponseEntity.ok("Registration completed successfully!");
+        return ResponseEntity.badRequest().body("Email already in use");
     }
 }
