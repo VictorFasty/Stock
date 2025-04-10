@@ -44,9 +44,10 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/auth/login?logout=true")
                         .permitAll()
                 )
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class); // Adicionando filtro de segurança
 
-        return http.build();
+
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
+                return http.build();
     }
 
     @Bean
