@@ -33,6 +33,15 @@ public class UserModel implements UserDetails {
 
     private UserRoles role;
 
+
+    public UserModel(String name, String email, String password, UserRoles role) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if(this.role == UserRoles.ADMIN) return List.of(

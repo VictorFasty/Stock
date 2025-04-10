@@ -1,8 +1,13 @@
 package victornext.stock.Controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.bind.annotation.*;
 import victornext.stock.Controller.DTOS.LoginRequestDTO;
 import victornext.stock.Controller.DTOS.RegisterRequestDTO;
@@ -18,34 +23,29 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class oAuthController {
 
+
+    private AuthenticationManager auhtenAuthenticationManager;
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO body) {
-        UserModel user = repository.findByEmail(body.email()).orElse(null);
+        var usernamePassword = new UsernamePasswordAuthenticationToken(body.email(), body.password());
+        var auth = this.auhtenAuthenticationManager.authenticate(usernamePassword);
 
-        if (user != null && passwordEncoder.matches(body.password(), user.getPassword())) {
-            String token = tokenService.generateToken(user);
-            return ResponseEntity.ok(new ResponseDTO(user.getName(), token));
-        }
-
-        return ResponseEntity.status(401).body("Invalid credentials");
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequestDTO body) {
-        Optional<UserModel> existingUser = repository.findByEmail(body.email());
-
-        if (existingUser.isPresent()) {
-            return ResponseEntity.status(400).body("User already exists!");
+        if(repository.findByEmail(body.email()).isEmpty()) {
+            return ResponseEntity.badRequest().build();
         }
 
-        UserModel newUser = new UserModel();
-        newUser.setPassword(passwordEncoder.encode(body.password()));
-        newUser.setEmail(body.email());
-        newUser.setName(body.name());
+        String encryptedPassword = new BCryptPasswordEncoder().encode(body.password());
+        UserModel newUser = new UserModel(body.name(), body.email(), encryptedPassword, body.role());
+
         repository.save(newUser);
 
         return ResponseEntity.ok("Registration completed successfully!");
