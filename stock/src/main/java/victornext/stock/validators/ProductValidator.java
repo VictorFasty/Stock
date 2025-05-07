@@ -39,14 +39,14 @@ public class ProductValidator {
 
 
 
-    public boolean isIdInvalid(Long id) {
-            return repository.findById(id).isEmpty(); // Retorna true se o ID não existir
-        }
+         public boolean isIdInvalid(Long id) {
+            return repository.findById(id).isEmpty();
+            }
 
 
 
 
-        private void Exists(ProductModel model) {
+         private void Exists(ProductModel model) {
                     if(existsProduct(model)){
                         throw new DuplicatedException("Enterprise already exists with this name!");
                     }
