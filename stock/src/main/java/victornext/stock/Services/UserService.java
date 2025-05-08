@@ -52,4 +52,9 @@ public class UserService {
     public ResponseEntity<List<UserModel>> findALl() {
         return ResponseEntity.status(HttpStatus.OK).body(repository.findAll());
     }
+
+
+    public UserModel FindByLogin(String login){
+        return repository.findByLogin(login);
+    }
 }

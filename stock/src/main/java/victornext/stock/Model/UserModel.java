@@ -26,7 +26,7 @@ public class UserModel implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String name;
+    private String login;
 
     private String email;
 
@@ -36,8 +36,8 @@ public class UserModel implements UserDetails {
     private UserRoles role;
 
 
-    public UserModel(String name, String email, String password, UserRoles role) {
-        this.name = name;
+    public UserModel(String login, String email, String password, UserRoles role) {
+        this.login = login;
         this.email = email;
         this.password = password;
         this.role = role;

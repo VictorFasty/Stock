@@ -9,7 +9,7 @@ public record UserDTO(
         Long id,
 
         @NotBlank(message = "Name is null!!")
-        String name,
+        String login,
 
         @Email(message = "Email not valid!!")
         @NotBlank(message = "Email not null!!")
