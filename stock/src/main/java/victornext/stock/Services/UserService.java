@@ -9,6 +9,7 @@ import victornext.stock.Model.UserModel;
 import victornext.stock.Repositories.UserRepository;
 import victornext.stock.validators.UserValidator;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -37,13 +38,18 @@ public class UserService {
         return ResponseEntity.status(HttpStatus.OK).body("SUCCESS!");
     }
 
-    public ResponseEntity<?> findById(Long id) {
+    public ResponseEntity<Object> findById(Long id) {
         validator.validateFindById(id);
-        return ResponseEntity.status(HttpStatus.OK).body(repository.findById(id).get());
+        Optional<UserModel> user = repository.findById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(repository.findById(id));
     }
 
     public Optional<UserModel> findByEmail(String email) {
         validator.validateEmailForSearch(email);
         return repository.findByEmail(email);
+    }
+
+    public ResponseEntity<List<UserModel>> findALl() {
+        return ResponseEntity.status(HttpStatus.OK).body(repository.findAll());
     }
 }
