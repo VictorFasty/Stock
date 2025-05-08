@@ -2,7 +2,6 @@ package victornext.stock.Controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +17,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
 
-    private UserService service;
-    private UserMapper mapper;
+    private final UserService service;
+    private final UserMapper mapper;
 
     @PostMapping("/create")
     ResponseEntity<?> create(@RequestBody @Valid UserDTO dto){

@@ -19,9 +19,15 @@ public record UserDTO(
         @Size(min = 6, max = 15)
         String password,
 
-        UserRoles roles
+        UserRoles role
 ) {
-    public UserDTO(Long id, String name, String email, String password) {
-        this(id, name, email, password, UserRoles.USER);
+    public UserDTO(Long id, String login, String email, String password, UserRoles role) {
+        this.id = id;
+        this.login = login;
+        this.email = email;
+        this.password = password;
+        this.role = role != null ? role : UserRoles.USER;  // Definindo valor padrão
     }
 }
+
+

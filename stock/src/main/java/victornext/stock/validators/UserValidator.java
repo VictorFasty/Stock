@@ -52,7 +52,7 @@ public class UserValidator {
     }
 
     private void validateFields(UserModel model) {
-        if (model.getName() == null || model.getEmail() == null || model.getPassword() == null) {
+        if (model.getLogin() == null || model.getEmail() == null || model.getPassword() == null) {
             throw new InvalidField("Name, email or password cannot be null.");
         }
     }

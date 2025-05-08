@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import victornext.stock.Controller.DTOS.EnterprisesDTO;
 import victornext.stock.Controller.Mappers.EnterprisesMapper;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("Enterprises")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 public class EnterprisesController {
 
     private final EnterprisesMapper mapper;

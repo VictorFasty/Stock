@@ -6,6 +6,7 @@ import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import victornext.stock.Controller.DTOS.EnterprisesDTO;
 import victornext.stock.Controller.DTOS.FindEnterpriseDTO;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/product")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 public class ProductController {
     private final ProductService service;
     private final ProductMapper mapper;

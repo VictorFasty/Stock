@@ -2,6 +2,7 @@ package victornext.stock.Security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -13,20 +14,24 @@ import victornext.stock.Services.UserService;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .formLogin(configurer -> configurer.loginPage("/login").permitAll())
+                // Configuração para FormLogin
+                .formLogin(configurer -> configurer
+                        .loginPage("/login")
+                        .permitAll()
+                )
+                // Configuração para HTTP Basic
+                .httpBasic()
+                .and()
                 .authorizeHttpRequests(authorize -> {
                     authorize.requestMatchers("/users/**").permitAll();
                     authorize.requestMatchers("/register").permitAll();
-                    authorize.requestMatchers("/product/delete/**").hasRole("ADMIN");
-                    authorize.requestMatchers("/Enterprises/delete/**").hasRole("ADMIN");
-                    authorize.requestMatchers("/product/**").hasAnyRole("USER", "ADMIN");
-                    authorize.requestMatchers("/Enterprises/**").hasAnyRole("USER", "ADMIN");
                     authorize.anyRequest().authenticated();
                 })
                 .build();

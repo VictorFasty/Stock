@@ -12,17 +12,16 @@ import victornext.stock.Services.UserService;
 public class CustomUserDetailsService implements UserDetailsService {
     private final UserService service;
 
-
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         UserModel userModel = service.FindByLogin(login);
 
-        if(userModel == null) {
+        if (userModel == null) {
             throw new UsernameNotFoundException("User not found!");
         }
 
         return User.builder()
-                .username(userModel.getUsername())
+                .username(userModel.getLogin())
                 .password(userModel.getPassword())
                 .roles(userModel.getRole().name())
                 .build();
