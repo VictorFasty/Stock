@@ -18,7 +18,7 @@ public class CustomAuthentication implements Authentication {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + this.userModel.getRole().name()));
+        return List.of(new SimpleGrantedAuthority(this.userModel.getRole().name()));
     }
 
 
