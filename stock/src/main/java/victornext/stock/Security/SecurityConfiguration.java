@@ -37,7 +37,11 @@ public class SecurityConfiguration {
                     authorize.requestMatchers("/register").permitAll();
                     authorize.anyRequest().authenticated();
                 })
-                .oauth2Login(Customizer.withDefaults())
+                .oauth2Login(oauth2 -> {
+                    oauth2
+                            .loginPage("/login")
+                            .permitAll();
+                })
                 .build();
     }
 

@@ -16,10 +16,12 @@ public class SecurityService {
 
     public UserModel userLogged() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String login = userDetails.getUsername();
-        return userService.FindByLogin(login);
 
+        if(authentication instanceof CustomAuthentication customAuthentication){
+            return customAuthentication.getUserModel();
+        }
+
+        return null;
     }
 
 }
