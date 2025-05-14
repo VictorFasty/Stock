@@ -20,16 +20,15 @@ import victornext.stock.Services.UserService;
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfiguration {
 
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, LoginSocialSucessHandler sucessHandler) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                // Configuração para FormLogin
                 .formLogin(configurer -> configurer
                         .loginPage("/login")
                         .permitAll()
                 )
-                // Configuração para HTTP Basic
                 .httpBasic()
                 .and()
                 .authorizeHttpRequests(authorize -> {
@@ -40,6 +39,7 @@ public class SecurityConfiguration {
                 .oauth2Login(oauth2 -> {
                     oauth2
                             .loginPage("/login")
+                            .successHandler(sucessHandler)
                             .permitAll();
                 })
                 .build();
