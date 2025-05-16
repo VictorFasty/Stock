@@ -12,6 +12,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import victornext.stock.Services.UserService;
 
@@ -29,8 +31,6 @@ public class SecurityConfiguration {
                         .loginPage("/login")
                         .permitAll()
                 )
-                .httpBasic()
-                .and()
                 .authorizeHttpRequests(authorize -> {
                     authorize.requestMatchers("/users/**").permitAll();
                     authorize.requestMatchers("/register").permitAll();
@@ -42,6 +42,7 @@ public class SecurityConfiguration {
                             .successHandler(sucessHandler)
                             .permitAll();
                 })
+                .oauth2ResourceServer(oauth2RS -> oauth2RS.jwt(Customizer.withDefaults()))
                 .build();
     }
 
@@ -50,6 +51,18 @@ public class SecurityConfiguration {
     @Bean
     public GrantedAuthorityDefaults grantedAuthorityDefaults() {
         return new GrantedAuthorityDefaults("");
+    }
+
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter(){
+        var authoritesConverter = new JwtGrantedAuthoritiesConverter();
+
+        authoritesConverter.setAuthorityPrefix("");
+
+        var converter = new JwtAuthenticationConverter();
+        converter.setJwtGrantedAuthoritiesConverter(authoritesConverter);
+
+        return converter;
     }
 
 }
