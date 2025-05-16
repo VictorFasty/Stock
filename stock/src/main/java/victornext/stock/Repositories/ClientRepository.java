@@ -9,5 +9,5 @@ import java.util.UUID;
 
 public interface ClientRepository extends JpaRepository<ClientModel, UUID> {
 
-    ClientModel findByClientID(String clientID);
+    ClientModel findByClientId(String clientId);
 }

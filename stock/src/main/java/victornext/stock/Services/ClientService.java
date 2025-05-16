@@ -19,6 +19,6 @@ public class ClientService {
 
 
     public ClientModel findByClientID(String clientID){
-        return repository.findByClientID(clientID);
+        return repository.findByClientId(clientID);
     }
 }

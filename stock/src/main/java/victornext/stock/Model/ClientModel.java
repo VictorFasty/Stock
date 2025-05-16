@@ -18,7 +18,8 @@ public class ClientModel {
     private UUID id;
 
 
-    private String client_id;
+    @Column(name = "client_id")
+    private String clientId;
 
     private String clientSecret;
 
