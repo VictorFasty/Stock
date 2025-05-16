@@ -111,6 +111,12 @@
 			<artifactId>spring-boot-starter-oauth2-client</artifactId>
 		</dependency>
 
+		<!-- Authorization Server  -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-authorization-server</artifactId>
+		</dependency>
+
 		<!-- JWT TOKEN -->
 		<dependency>
 			<groupId>com.auth0</groupId>
