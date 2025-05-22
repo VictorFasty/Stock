@@ -29,4 +29,11 @@ public class ClientController {
         model.setClientSecret(PasswordEncrypt);
         return clientService.create(model);
     }
+
+
+    @GetMapping("/authorized")
+    @ResponseBody
+    private String getAuthorizationCode(@RequestParam("code") String code){
+        return "your authorization code" + code ;
+    }
 }
