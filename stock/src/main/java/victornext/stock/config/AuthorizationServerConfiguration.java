@@ -10,22 +10,29 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
+import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
+import victornext.stock.Security.CustomAuthentication;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Duration;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -55,14 +62,13 @@ public class AuthorizationServerConfiguration {
 
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
     }
 
 
-
     @Bean
-    public TokenSettings tokenSettings(){
+    public TokenSettings tokenSettings() {
         return TokenSettings.builder()
                 .accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
                 .accessTokenTimeToLive(Duration.ofMinutes(60))
@@ -71,7 +77,7 @@ public class AuthorizationServerConfiguration {
     }
 
     @Bean
-    public ClientSettings clientSettings(){
+    public ClientSettings clientSettings() {
         return ClientSettings.builder()
                 .requireAuthorizationConsent(false)
                 .build();
@@ -80,14 +86,12 @@ public class AuthorizationServerConfiguration {
 
     @Bean
     //Pra gerar o token JWK(Json Web Key) é uma representação em Json pra uma chave criptografada
-    public JWKSource<SecurityContext> jwkSource() throws Exception{
+    public JWKSource<SecurityContext> jwkSource() throws Exception {
         RSAKey rsaKey = generateRSA();
         JWKSet jwkSet = new JWKSet(rsaKey);
 
         return new ImmutableJWKSet<>(jwkSet);
     }
-
-
 
 
     private RSAKey generateRSA() throws Exception {
@@ -108,7 +112,6 @@ public class AuthorizationServerConfiguration {
     }
 
 
-
     @Bean
     public JwtDecoder jwtDecoder(JWKSource<SecurityContext> jwkSource) {
         return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
@@ -117,7 +120,7 @@ public class AuthorizationServerConfiguration {
 
     @Bean
     public AuthorizationServerSettings authorizationServerSettings() {
-        return  AuthorizationServerSettings.builder()
+        return AuthorizationServerSettings.builder()
                 .tokenEndpoint("/oauth2/token")
                 .tokenIntrospectionEndpoint("/oauth/introspect")
                 .tokenRevocationEndpoint("/oauth2/revoke")
@@ -128,4 +131,29 @@ public class AuthorizationServerConfiguration {
                 .build();
     }
 
+
+    @Bean
+    public OAuth2TokenCustomizer<JwtEncodingContext> tokenCustomizer() {
+        return context -> {
+            var principal = context.getPrincipal();
+
+
+            if (principal instanceof CustomAuthentication authentication) {
+                OAuth2TokenType typeToken = context.getTokenType();
+
+                if (OAuth2TokenType.ACCESS_TOKEN.equals(typeToken)) {
+
+                    Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+                    List<String> authoritiesList = authorities.stream().map(GrantedAuthority::getAuthority).toList();
+
+
+                    context
+                            .getClaims()
+                            .claim("authorities", authoritiesList)
+                            .claim("email ", authentication.getUserModel().getEmail());
+
+                }
+            }
+        };
+    }
 }
