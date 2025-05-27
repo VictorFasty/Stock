@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @OpenAPIDefinition(
         info = @Info(
-                title = "Library API",
+                title = "Stock API",
                 version = "v1",
                 contact = @Contact(
                         name = "Victor next",
