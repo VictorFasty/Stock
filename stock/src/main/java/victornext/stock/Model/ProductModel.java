@@ -27,6 +27,9 @@ public class ProductModel {
     private Integer quantity;
     private Double price;
 
+    @Column(nullable = false)
+    private Integer quantidadeMinima;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tb_enterprise", nullable = false) // Coluna correta no banco de dados
     @JsonBackReference // Evita o loop infinito ao serializar a referência ao enterprise
