@@ -117,6 +117,12 @@
 			<artifactId>spring-boot-starter-oauth2-authorization-server</artifactId>
 		</dependency>
 
+		<!-- Envio de e-mails com Spring Boot -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
 
 
 		<!-- Swagger -->
