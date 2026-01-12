@@ -15,4 +15,5 @@ public interface ProductRepository extends JpaRepository<ProductModel, Long>, Jp
     Optional<ProductModel> findByName(String name);
     List<ProductModel> findByQuantityLessThanQuantidadeMinima();
     Page<ProductModel> findByNameContainingIgnoreCase(String name, Pageable pageable);
+    boolean existsByNameIgnoreCase(String name);
 }

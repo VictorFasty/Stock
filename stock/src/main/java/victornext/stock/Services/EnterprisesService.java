@@ -14,7 +14,6 @@ import victornext.stock.Exceptions.NotFoundException;
 import victornext.stock.Model.EnterprisesModel;
 import victornext.stock.Repositories.EnterprisesRepository;
 import victornext.stock.Repositories.Specs.EnterprisesSpecs;
-import victornext.stock.validators.EnterprisesValidator;
 
 import java.util.List;
 import java.util.Optional;
