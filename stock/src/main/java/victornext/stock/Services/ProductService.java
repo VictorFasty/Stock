@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import victornext.stock.Controller.DTOS.ProductDTO;
+import victornext.stock.Controller.Mappers.ProductMapper;
 import victornext.stock.Exceptions.DuplicatedException;
 import victornext.stock.Exceptions.NotFoundException;
 import victornext.stock.Model.ProductModel;
@@ -20,90 +22,80 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository repository;
+    private final ProductMapper mapper;
 
 
-
-
-    public ProductModel create(ProductModel model) {
+    public ProductDTO create(ProductDTO dto) {
+        ProductModel model = mapper.toEntity(dto);
         if (repository.existsByNameIgnoreCase(model.getName())) {
             throw new DuplicatedException("Product with name '" + model.getName() + "' already exists.");
         }
-        return repository.save(model);
+        return mapper.toDTO(repository.save(model));
     }
 
 
-    public ResponseEntity<?> update(ProductModel model) {
-        if (repository.existsByNameIgnoreCase(model.getName())) {
-            throw new DuplicatedException("Product with name '" + model.getName() + "' already exists.");
-        }
-        ProductModel model1 = repository.save(model);
+    public ProductDTO update(Long id, ProductDTO dto) {
+        ProductModel existingModel = repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Product not found"));
 
-        return ResponseEntity.status(HttpStatus.OK).body(model1);
+
+        repository.findByName(dto.name())
+                .filter(p -> !p.getId().equals(id))
+                .ifPresent(p -> { throw new DuplicatedException("Name already exists"); });
+
+
+        ProductModel inputModel = mapper.toEntity(dto);
+        inputModel.setId(id);
+
+
+
+        return mapper.toDTO(repository.save(inputModel));
     }
 
 
-    public ResponseEntity<String> delete(Long id) {
-        if(repository.findById(id) == null) {
-            throw new RuntimeException("Nao encontrado");
+    public void delete(Long id) {
+        if (!repository.existsById(id)) {
+            throw new NotFoundException("Product not found");
         }
         repository.deleteById(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Product successfully deleted");
     }
 
 
-    public ResponseEntity<Object> findById(Long id) {
-        if(repository.findById(id) == null) {
-            throw new RuntimeException("Nao encontrado");
-        }
-        repository.findById(id);
-
-        return ResponseEntity.status(HttpStatus.OK).body(repository.findById(id));
+    public ProductDTO findById(Long id) {
+        return repository.findById(id)
+                .map(mapper::toDTO)
+                .orElseThrow(() -> new NotFoundException("Product not found"));
     }
 
 
-    public List<ProductModel> Search(String name, Integer page, Integer pageSize) {
-        if (name == null || name.isEmpty()) {
-            throw new NotFoundException("O nome para pesquisa não pode ser vazio ou nulo.");
+    public List<ProductDTO> search(String name, Integer page, Integer pageSize) {
+        if (name == null || name.isBlank()) {
+            throw new NotFoundException("Search name cannot be empty.");
         }
-
         Pageable pageRequest = PageRequest.of(page, pageSize);
-
-
-        Page<ProductModel> pageResult = repository.findByNameContainingIgnoreCase(name, pageRequest);
-
-        return pageResult.getContent();
+        return repository.findByNameContainingIgnoreCase(name, pageRequest)
+                .map(mapper::toDTO)
+                .getContent(); // .getContent() pega a lista da Page
     }
 
 
-    public ResponseEntity<Object> AdditionProduct(Long id, Integer quantity) {
+    public ProductDTO addStock(Long id, Integer quantity) {
         ProductModel model = repository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Product not found!!"));
+                .orElseThrow(() -> new NotFoundException("Product not found"));
 
-        Integer stock = model.getQuantity();
-        model.setQuantity(stock + quantity);
-
-        repository.save(model);
-        return ResponseEntity.ok(model);
-
+        model.setQuantity(model.getQuantity() + quantity);
+        return mapper.toDTO(repository.save(model));
     }
 
-    public ResponseEntity<Object> RemoveProduct(Long id, Integer quantity) {
-        if(repository.findById(id) == null) {
-            throw new RuntimeException("Nao encontrado");
-        }
+    public ProductDTO removeStock(Long id, Integer quantity) {
         ProductModel model = repository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Product not found!!"));
+                .orElseThrow(() -> new NotFoundException("Product not found"));
 
-        Integer stock = model.getQuantity();
-
-        if (stock < quantity) {
-            return ResponseEntity.badRequest().body("Error: Insufficient quantity in stock!");
+        if (model.getQuantity() < quantity) {
+            throw new IllegalArgumentException("Insufficient stock!");
         }
 
-        model.setQuantity(stock - quantity);
-
-        repository.save(model);
-        return ResponseEntity.ok(model);
-
+        model.setQuantity(model.getQuantity() - quantity);
+        return mapper.toDTO(repository.save(model));
     }
 }

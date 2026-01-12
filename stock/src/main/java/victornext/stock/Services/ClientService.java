@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import victornext.stock.Controller.DTOS.ClientDTO;
 import victornext.stock.Controller.Mappers.ClientMapper;
+import victornext.stock.Exceptions.DuplicatedException;
 import victornext.stock.Model.ClientModel;
 import victornext.stock.Repositories.ClientRepository;
 import victornext.stock.Repositories.UserRepository;
@@ -18,12 +19,19 @@ public class ClientService {
     private final PasswordEncoder encoder;
 
 
-    public ClientModel create (ClientDTO dto){
+    public ClientDTO create(ClientDTO dto) {
+        if (repository.findByClientId(dto.clientId()) != null) {
+            throw new DuplicatedException("Client ID already exists: " + dto.clientId());
+        }
         ClientModel model = mapper.toEntity(dto);
-        var encryptedPassword = encoder.encode(model.getClientSecret());
-        model.setClientSecret(encryptedPassword);
-        return repository.save(model);
 
+        var encryptedPassword = encoder.encode(model.getClientSecret());
+
+        model.setClientSecret(encryptedPassword);
+
+        ClientModel saved = repository.save(model);
+
+        return mapper.toDTO(saved);
     }
 
 

@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 public class ProductController {
     private final ProductService service;
-    private final ProductMapper mapper;
 
 
 
@@ -38,13 +37,10 @@ public class ProductController {
             @ApiResponse(responseCode = "201", description = "Product created successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid request body")
     })
-    @PostMapping(value = "/create")
-    public ResponseEntity<?> create(@RequestBody @Valid ProductDTO dto) {
-        ProductModel model = mapper.toEntity(dto);
-        ProductModel savedProduct = service.create(model);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
+    @PostMapping("/create")
+    public ResponseEntity<ProductDTO> create(@RequestBody @Valid ProductDTO dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(dto));
     }
-
 
 
 
@@ -55,13 +51,9 @@ public class ProductController {
             @ApiResponse(responseCode = "400", description = "Invalid request body"),
             @ApiResponse(responseCode = "404", description = "Product not found")
     })
-    @PutMapping(value = "/update/{id}")
-    public ResponseEntity<?> update(
-            @PathVariable(value = "id") Long id,
-            @RequestBody @Valid ProductDTO dto) {
-        ProductModel model = mapper.toEntity(dto);
-        model.setId(id);
-        return service.update(model);
+    @PutMapping("/update/{id}")
+    public ResponseEntity<ProductDTO> update(@PathVariable Long id, @RequestBody @Valid ProductDTO dto) {
+        return ResponseEntity.ok(service.update(id, dto));
     }
 
 
@@ -74,9 +66,10 @@ public class ProductController {
             @ApiResponse(responseCode = "204", description = "Product deleted successfully"),
             @ApiResponse(responseCode = "404", description = "Product not found")
     })
-    @DeleteMapping(value = "/delete/{id}")
-    public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
-        return service.delete(id);
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
 
@@ -89,9 +82,9 @@ public class ProductController {
             @ApiResponse(responseCode = "200", description = "Product found"),
             @ApiResponse(responseCode = "404", description = "Product not found")
     })
-    @GetMapping(value = "/find/{id}")
-    public ResponseEntity<?> findById(@PathVariable(value = "id") Long id) {
-        return service.findById(id);
+    @GetMapping("/find/{id}")
+    public ResponseEntity<ProductDTO> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.findById(id));
     }
 
 
@@ -105,18 +98,11 @@ public class ProductController {
             @ApiResponse(responseCode = "200", description = "Search results returned successfully")
     })
     @GetMapping("/search/{name}")
-    public ResponseEntity<List<FindEnterpriseDTO>> search(
-            @PathVariable(value = "name") String name,
-            @RequestParam(value = "page", defaultValue = "0") Integer page,
-            @RequestParam(value = "pageSize", defaultValue = "1") Integer pageSize,
-            @RequestParam(value = "sort", defaultValue = "name,asc") String sort) {
-
-        List<ProductModel> searchResults = service.Search(name, page, pageSize);
-        List<FindEnterpriseDTO> dtoResults = searchResults.stream()
-                .map(mapper::toDTO)
-                .toList();
-
-        return ResponseEntity.ok(dtoResults);
+    public ResponseEntity<List<ProductDTO>> search(
+            @PathVariable String name,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer pageSize) {
+        return ResponseEntity.ok(service.search(name, page, pageSize));
     }
 
 
@@ -130,11 +116,9 @@ public class ProductController {
             @ApiResponse(responseCode = "200", description = "Quantity added successfully"),
             @ApiResponse(responseCode = "404", description = "Product not found")
     })
-    @PutMapping("A/{id}/{quantity}")
-    public ResponseEntity<Object> AdditionQuantity(
-            @PathVariable(value = "id") Long id,
-            @PathVariable(value = "quantity") Integer quantity) {
-        return service.AdditionProduct(id, quantity);
+    @PutMapping("/add-stock/{id}/{quantity}")
+    public ResponseEntity<ProductDTO> addStock(@PathVariable Long id, @PathVariable Integer quantity) {
+        return ResponseEntity.ok(service.addStock(id, quantity));
     }
 
 
@@ -148,10 +132,8 @@ public class ProductController {
             @ApiResponse(responseCode = "400", description = "Insufficient stock"),
             @ApiResponse(responseCode = "404", description = "Product not found")
     })
-    @PutMapping("R/{id}/{quantity}")
-    public ResponseEntity<Object> RemoveQuantity(
-            @PathVariable(value = "id") Long id,
-            @PathVariable(value = "quantity") Integer quantity) {
-        return service.RemoveProduct(id, quantity);
+    @PutMapping("/remove-stock/{id}/{quantity}")
+    public ResponseEntity<ProductDTO> removeStock(@PathVariable Long id, @PathVariable Integer quantity) {
+        return ResponseEntity.ok(service.removeStock(id, quantity));
     }
 }

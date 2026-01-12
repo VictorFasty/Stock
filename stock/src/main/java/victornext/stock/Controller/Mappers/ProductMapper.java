@@ -10,15 +10,15 @@ import victornext.stock.Model.ProductModel;
 import victornext.stock.Repositories.EnterprisesRepository;
 
 @Mapper(componentModel = "spring", uses = EnterprisesMapper.class)
-public abstract class ProductMapper {
-
-    @Autowired
-    EnterprisesRepository repository;
+public interface ProductMapper {
 
     @Mapping(target = "enterprise", expression = "java(repository.findById(dto.idEnterprise()).orElse(null))")
     public abstract ProductModel toEntity(ProductDTO dto);
 
-    public abstract FindEnterpriseDTO toDTO(ProductModel productModel);
+
+    public abstract ProductDTO toDTO(ProductModel productModel);
+
+    public abstract FindEnterpriseDTO toFindDTO(ProductModel productModel);
 }
 
 
