@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +25,6 @@ import java.util.List;
 @Tag(name = "Enterprises", description = "Endpoints for managing enterprises")
 public class EnterprisesController {
 
-    private final EnterprisesMapper mapper;
     private final EnterprisesService service;
 
     // ---------------------- CREATE ----------------------
@@ -34,12 +34,10 @@ public class EnterprisesController {
             @ApiResponse(responseCode = "400", description = "Validation error")
     })
     @PostMapping(value = "/create")
-    public ResponseEntity<?> create(@RequestBody @Valid EnterprisesDTO dto) {
-        EnterprisesModel model = mapper.toEntity(dto);
-        service.Create(model);
-        return ResponseEntity.ok(model);
+    public ResponseEntity<EnterprisesDTO> create(@RequestBody @Valid EnterprisesDTO dto) {
+        EnterprisesDTO createdDto = service.create(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdDto);
     }
-
 
 
 
@@ -52,12 +50,13 @@ public class EnterprisesController {
             @ApiResponse(responseCode = "404", description = "Enterprise not found")
     })
     @PutMapping(value = "/update/{id}")
-    public ResponseEntity<?> update(@PathVariable(value = "id") Long id, @RequestBody @Valid EnterprisesDTO dto) {
-        EnterprisesModel model = mapper.toEntity(dto);
-        model.setId(id);
-        return service.update(model);
+    public ResponseEntity<EnterprisesDTO> update(
+            @PathVariable(value = "id") Long id,
+            @RequestBody @Valid EnterprisesDTO dto
+    ) {
+        EnterprisesDTO updatedDto = service.update(id, dto);
+        return ResponseEntity.ok(updatedDto);
     }
-
 
 
 
@@ -122,8 +121,6 @@ public class EnterprisesController {
             @RequestParam(value = "pageSize", defaultValue = "1") Integer pageSize,
             @RequestParam(value = "sort", defaultValue = "name,asc") String sort
     ) {
-        Page<EnterprisesModel> resultado = service.Search(name, page, pageSize);
-        Page<EnterprisesDTO> lista = resultado.map(mapper::toDTO);
-        return ResponseEntity.ok(lista);
+        return ResponseEntity.ok(service.Search(name, page, pageSize));
     }
 }
