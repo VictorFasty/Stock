@@ -5,6 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import victornext.stock.Controller.DTOS.UserDTO;
+import victornext.stock.Controller.Mappers.UserMapper;
+import victornext.stock.Exceptions.DuplicatedException;
 import victornext.stock.Model.UserModel;
 import victornext.stock.Repositories.UserRepository;
 
@@ -16,14 +19,22 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository repository;
     private final PasswordEncoder encoder;
+    private final UserMapper mapper;
 
-    public ResponseEntity<?> create(UserModel user) {
-        if(repository.existsByLoginAndEmail(user.getLogin(), user.getEmail())){
-            throw new RuntimeException("Usuario Ja Existente");
+    public UserDTO create(UserDTO dto) {
+
+        UserModel model = mapper.toEntity(dto);
+
+
+        if(repository.existsByLoginAndEmail(model.getLogin(), model.getEmail())){
+            throw new DuplicatedException("Usuario Ja Existente");
         }
-        user.setPassword(encoder.encode(user.getPassword()));
-        repository.save(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body("SUCCESS!");
+
+
+        model.setPassword(encoder.encode(model.getPassword()));
+
+        UserModel savedUser = repository.save(model);
+        return mapper.toDto(savedUser);
     }
 
     public ResponseEntity<?> update(UserModel user) {

@@ -24,7 +24,6 @@ import java.util.List;
 public class UserController {
 
     private final UserService service;
-    private final UserMapper mapper;
 
 
     @Operation(
@@ -37,12 +36,12 @@ public class UserController {
             @ApiResponse(responseCode = "409", description = "Conflict: user already exists")
     })
     @PostMapping("/create")
-    ResponseEntity<?> create(@RequestBody @Valid UserDTO dto){
-        UserModel model = mapper.toEntity(dto);
+    public ResponseEntity<UserDTO> create(@RequestBody @Valid UserDTO dto) {
+        // 1. Chama o serviço
+        UserDTO createdUser = service.create(dto);
 
-        ResponseEntity<?> savedUser = service.create(model);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+        // 2. Retorna o status 201 (Created) e o corpo
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
 
