@@ -7,7 +7,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import victornext.stock.Model.UserModel;
 import victornext.stock.Repositories.UserRepository;
-import victornext.stock.validators.UserValidator;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,36 +15,47 @@ import java.util.Optional;
 @AllArgsConstructor
 public class UserService {
     private final UserRepository repository;
-    private final UserValidator validator;
     private final PasswordEncoder encoder;
 
     public ResponseEntity<?> create(UserModel user) {
-        validator.validateCreate(user);
+        if(repository.existsByLoginAndEmail(user.getLogin(), user.getEmail())){
+            throw new RuntimeException("Usuario Ja Existente");
+        }
         user.setPassword(encoder.encode(user.getPassword()));
         repository.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body("SUCCESS!");
     }
 
     public ResponseEntity<?> update(UserModel user) {
-        validator.validateUpdate(user);
+        if(repository.existsByLoginAndEmail(user.getLogin(), user.getEmail())){
+            throw new RuntimeException("Usuario Ja Existente");
+        }
         repository.save(user);
         return ResponseEntity.status(HttpStatus.OK).body("SUCCESS!");
     }
 
     public ResponseEntity<?> delete(Long id) {
-        validator.validateDelete(id);
+        if(repository.findById(id).isEmpty()) {
+            throw new RuntimeException("Usuario nao localizado");
+
+        }
         repository.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body("SUCCESS!");
     }
 
     public ResponseEntity<Object> findById(Long id) {
-        validator.validateFindById(id);
+        if(repository.findById(id).isEmpty()) {
+            throw new RuntimeException("Usuario nao localizado");
+
+        }
         Optional<UserModel> user = repository.findById(id);
         return ResponseEntity.status(HttpStatus.OK).body(repository.findById(id));
     }
 
     public Optional<UserModel> findByEmail(String email) {
-        validator.validateEmailForSearch(email);
+        if(repository.findByEmail(email).isEmpty()){
+            throw new RuntimeException("Email nao encontrado");
+        }
         return repository.findByEmail(email);
     }
 
