@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import victornext.stock.Exceptions.NotFoundException;
 import victornext.stock.Model.EnterprisesModel;
 import victornext.stock.Repositories.EnterprisesRepository;
 import victornext.stock.Repositories.Specs.EnterprisesSpecs;
@@ -22,7 +23,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class EnterprisesService {
     private final EnterprisesRepository repository;
-    private final EnterprisesValidator validator;
 
 
 
@@ -33,7 +33,6 @@ public class EnterprisesService {
 
 
     public ResponseEntity<EnterprisesModel> Create(EnterprisesModel model) {
-        validator.validation(model);
         EnterprisesModel savedEnterprise = repository.save(model);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedEnterprise);
     }
@@ -48,7 +47,9 @@ public class EnterprisesService {
 
 
     public ResponseEntity<Object> findById(Long id) {
-        validator.validateId(id);
+        if(id == null) {
+            throw new NotFoundException("Product with ID " + id + " not found.");
+        }
         Optional<EnterprisesModel> enterprise = repository.findById(id);
         return ResponseEntity.status(HttpStatus.OK).body(repository.findById(id));
     }
@@ -57,7 +58,9 @@ public class EnterprisesService {
 
 
     public ResponseEntity<?> delete(Long id) {
-        validator.validateId(id);
+        if(id == null) {
+            throw new NotFoundException("Product with ID " + id + " not found.");
+        }
         ResponseEntity<Object> response = findById(id);
         repository.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Enterprise successfully deleted");
@@ -67,14 +70,18 @@ public class EnterprisesService {
 
 
     public ResponseEntity<?> update(EnterprisesModel model) {
-        validator.validation(model);
+        if(model.getId() == null) {
+            throw new NotFoundException("Product with ID " + model.getId() + " not found.");
+        }
         EnterprisesModel updatedEnterprise = repository.save(model);
         return ResponseEntity.status(HttpStatus.OK).body(updatedEnterprise);
     }
 
 
     public Page<EnterprisesModel> Search(String name, Integer page, Integer pageSize) {
-        validator.validateSearchName(name);
+        if (name == null || name.isEmpty()) {
+            throw new NotFoundException("The name for search cannot be empty or null.");
+        }
 
         Pageable pageRequest = PageRequest.of(page, pageSize);
 

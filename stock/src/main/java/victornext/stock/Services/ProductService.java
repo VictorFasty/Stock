@@ -67,15 +67,12 @@ public class ProductService {
 
 
     public List<ProductModel> Search(String name, Integer page, Integer pageSize) {
-        validator.validateSearchName(name); 
-
-
-        Specification<ProductModel> specs = Specification.where(ProductSpecs.nameLike(name));
-
+        validator.validateSearchName(name);
 
         Pageable pageRequest = PageRequest.of(page, pageSize);
 
-        Page<ProductModel> pageResult = repository.findAll(specs, pageRequest);
+
+        Page<ProductModel> pageResult = repository.findByNameContainingIgnoreCase(name, pageRequest);
 
         return pageResult.getContent();
     }
