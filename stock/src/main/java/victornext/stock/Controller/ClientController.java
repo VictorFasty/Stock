@@ -21,9 +21,6 @@ import victornext.stock.Services.ClientService;
 public class ClientController {
 
     private final ClientService clientService;
-    private final ClientMapper mapper;
-    private final PasswordEncoder encoder;
-
 
 
 
@@ -39,10 +36,7 @@ public class ClientController {
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ADMIN')")
     public ClientModel create(@RequestBody ClientDTO dto) {
-        ClientModel model = mapper.toEntity(dto);
-        var encryptedPassword = encoder.encode(model.getClientSecret());
-        model.setClientSecret(encryptedPassword);
-        return clientService.create(model);
+        return clientService.create(dto);
     }
 
 
