@@ -121,6 +121,6 @@ public class EnterprisesController {
             @RequestParam(value = "pageSize", defaultValue = "1") Integer pageSize,
             @RequestParam(value = "sort", defaultValue = "name,asc") String sort
     ) {
-        return ResponseEntity.ok(service.Search(name, page, pageSize));
+        return ResponseEntity.ok(service.search(name, page, pageSize));
     }
 }
