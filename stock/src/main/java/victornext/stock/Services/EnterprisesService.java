@@ -74,19 +74,11 @@ public class EnterprisesService {
 
 
     public Page<EnterprisesModel> Search(String name, Integer page, Integer pageSize) {
-        // validator
         validator.validateSearchName(name);
-
-        Specification<EnterprisesModel> specs = (root, query, cb) -> {
-            if (name != null && !name.isEmpty()) {
-                return cb.like(cb.lower(root.get("name")), "%" + name.toLowerCase() + "%");
-            }
-            return cb.conjunction();
-        };
 
         Pageable pageRequest = PageRequest.of(page, pageSize);
 
-        return repository.findAll(specs, pageRequest); // Usando findAll com Specification
+        return repository.findByNameContainingIgnoreCase(name, pageRequest);
     }
 
 
