@@ -11,6 +11,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface EnterprisesRepository extends JpaRepository<EnterprisesModel, Long>, JpaSpecificationExecutor<EnterprisesModel> {
-    Optional<EnterprisesModel> findByName(String name);
     Page<EnterprisesModel> findByNameContainingIgnoreCase(String name, Pageable pageable);
 }
