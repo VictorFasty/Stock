@@ -13,7 +13,7 @@ CREATE TABLE tb_enterprises (
     name VARCHAR(255) NOT NULL
 );
 
--- Tabela de Produtos (Unificada com base na sua classe ProductModel)
+-- Tabela de Produtos (Unificada com base na ProductModel)
 CREATE TABLE tb_products (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255),
