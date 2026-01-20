@@ -9,4 +9,5 @@ public interface EnterprisesMapper {
     EnterprisesModel toEntity(EnterprisesDTO dto);
 
     EnterprisesDTO toDTO(EnterprisesModel enterprises);
+
 }

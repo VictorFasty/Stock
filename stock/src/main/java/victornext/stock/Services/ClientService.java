@@ -20,7 +20,7 @@ public class ClientService {
 
 
     public ClientDTO create(ClientDTO dto) {
-        if (repository.findByClientId(dto.clientId()) != null) {
+        if (repository.existsByClientId(dto.clientId())) {
             throw new DuplicatedException("Client ID already exists: " + dto.clientId());
         }
         ClientModel model = mapper.toEntity(dto);

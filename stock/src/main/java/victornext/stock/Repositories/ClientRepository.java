@@ -10,4 +10,6 @@ import java.util.UUID;
 public interface ClientRepository extends JpaRepository<ClientModel, UUID> {
 
     ClientModel findByClientId(String clientId);
+
+    boolean existsByClientId(String clientId);
 }
