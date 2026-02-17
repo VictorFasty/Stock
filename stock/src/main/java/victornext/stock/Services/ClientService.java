@@ -2,6 +2,9 @@ package victornext.stock.Services;
 
 
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import victornext.stock.Controller.DTOS.ClientDTO;
@@ -23,13 +26,13 @@ public class ClientService {
         if (repository.existsByClientId(dto.clientId())) {
             throw new DuplicatedException("Client ID already exists: " + dto.clientId());
         }
+
         ClientModel model = mapper.toEntity(dto);
-
         var encryptedPassword = encoder.encode(model.getClientSecret());
-
         model.setClientSecret(encryptedPassword);
 
         ClientModel saved = repository.save(model);
+
 
         return mapper.toDTO(saved);
     }
