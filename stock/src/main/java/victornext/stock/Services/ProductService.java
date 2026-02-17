@@ -2,6 +2,7 @@ package victornext.stock.Services;
 
 
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -52,11 +53,13 @@ public class ProductService {
     }
 
 
-    public void delete(Long id) {
+    public ResponseEntity<?> delete(Long id) {
         if (!repository.existsById(id)) {
-            throw new NotFoundException("Product not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario nao localizado");
         }
         repository.deleteById(id);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 
