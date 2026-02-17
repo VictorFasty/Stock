@@ -1,6 +1,7 @@
 package victornext.stock.Services;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -66,18 +67,16 @@ public class EnterprisesService {
 
 
 
-    public EnterprisesDTO update(Long id, EnterprisesDTO dto) {
+    public ResponseEntity<EnterprisesModel> update(Long id, EnterprisesDTO dto) {
         if (!repository.existsById(id)) {
             throw new NotFoundException("Enterprise not found with ID: " + id);
         }
 
 
-        EnterprisesModel model = mapper.toEntity(dto);
+        EnterprisesModel modelSaved = mapper.toEntity(dto);
+        repository.save(modelSaved);
 
-        model.setId(id);
-
-        EnterprisesModel saved = repository.save(model);
-        return mapper.toDTO(saved);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 

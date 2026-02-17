@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -47,12 +48,11 @@ public class EnterprisesController {
             @ApiResponse(responseCode = "404", description = "Enterprise not found")
     })
     @PutMapping(value = "/update/{id}")
-    public ResponseEntity<EnterprisesDTO> update(
+    public ResponseEntity<EnterprisesModel> update(
             @PathVariable(value = "id") Long id,
             @RequestBody @Valid EnterprisesDTO dto
     ) {
-        EnterprisesDTO updatedDto = service.update(id, dto);
-        return ResponseEntity.ok(updatedDto);
+        return service.update(id, dto);
     }
 
 
