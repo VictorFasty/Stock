@@ -37,7 +37,7 @@ public class ClientController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ADMIN')")
-    public ClientDTO create(@RequestBody @Valid ClientDTO dto) {
+    public ResponseEntity<?> create(@RequestBody @Valid ClientDTO dto) {
         return clientService.create(dto);
     }
 

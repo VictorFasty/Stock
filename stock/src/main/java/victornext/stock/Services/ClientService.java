@@ -22,19 +22,15 @@ public class ClientService {
     private final PasswordEncoder encoder;
 
 
-    public ClientDTO create(ClientDTO dto) {
-        if (repository.existsByClientId(dto.clientId())) {
-            throw new DuplicatedException("Client ID already exists: " + dto.clientId());
+    public ResponseEntity<?> create(ClientDTO dto) {
+        ClientModel modelSaved = mapper.toEntity(dto);
+
+        if(repository.existsByClientId(dto.clientId())){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Login Ja Registrado, tente outro");
         }
 
-        ClientModel model = mapper.toEntity(dto);
-        var encryptedPassword = encoder.encode(model.getClientSecret());
-        model.setClientSecret(encryptedPassword);
-
-        ClientModel saved = repository.save(model);
-
-
-        return mapper.toDTO(saved);
+        repository.save(modelSaved);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
 
