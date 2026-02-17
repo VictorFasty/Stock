@@ -7,12 +7,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import victornext.stock.Controller.DTOS.EnterprisesDTO;
-import victornext.stock.Controller.Mappers.EnterprisesMapper;
 import victornext.stock.Model.EnterprisesModel;
 import victornext.stock.Services.EnterprisesService;
 
@@ -34,9 +32,8 @@ public class EnterprisesController {
             @ApiResponse(responseCode = "400", description = "Validation error")
     })
     @PostMapping(value = "/create")
-    public ResponseEntity<EnterprisesDTO> create(@RequestBody @Valid EnterprisesDTO dto) {
-        EnterprisesDTO createdDto = service.create(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdDto);
+    public ResponseEntity<EnterprisesModel> create(@RequestBody @Valid EnterprisesDTO dto) {
+        return service.create(dto);
     }
 
 

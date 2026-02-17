@@ -29,13 +29,10 @@ public class EnterprisesService {
 
 
 
-
-    public EnterprisesDTO create(EnterprisesDTO dto) {
-        EnterprisesModel model = mapper.toEntity(dto);
-        EnterprisesModel savedModel = repository.save(model);
-
-
-        return mapper.toDTO(savedModel);
+    public ResponseEntity<EnterprisesModel> create(EnterprisesDTO dto) {
+        EnterprisesModel savedModel = mapper.toEntity(dto);
+        repository.save(savedModel);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
 
