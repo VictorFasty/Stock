@@ -25,12 +25,11 @@ public class ProductService {
     private final ProductMapper mapper;
 
 
-    public ProductDTO create(ProductDTO dto) {
-        ProductModel model = mapper.toEntity(dto);
-        if (repository.existsByNameIgnoreCase(model.getName())) {
-            throw new DuplicatedException("Product with name '" + model.getName() + "' already exists.");
-        }
-        return mapper.toDTO(repository.save(model));
+    public ResponseEntity<?> create(ProductDTO dto) {
+        ProductModel savedModel = mapper.toEntity(dto);
+        repository.save(savedModel);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
 

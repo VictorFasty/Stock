@@ -38,8 +38,8 @@ public class ProductController {
             @ApiResponse(responseCode = "400", description = "Invalid request body")
     })
     @PostMapping("/create")
-    public ResponseEntity<ProductDTO> create(@RequestBody @Valid ProductDTO dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(dto));
+    public ResponseEntity<?> create(@RequestBody @Valid ProductDTO dto) {
+        return service.create(dto);
     }
 
 
