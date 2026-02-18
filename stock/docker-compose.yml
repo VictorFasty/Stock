@@ -22,4 +22,4 @@ services:
       - GOOGLE_CLIENT_SECRET=${GOOGLE_SECRET}
       - SPRING_PROFILES_ACTIVE=production
     depends_on:
-      - db 
+      - db
