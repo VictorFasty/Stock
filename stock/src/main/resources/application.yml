@@ -1,6 +1,6 @@
 spring:
   application:
-    name: libraryapi
+    name: stockapi
 
   profiles:
     active: production
