@@ -9,11 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import victornext.stock.Controller.DTOS.ClientDTO;
-import victornext.stock.Controller.Mappers.ClientMapper;
-import victornext.stock.Model.ClientModel;
 import victornext.stock.Services.ClientService;
 
 @RestController

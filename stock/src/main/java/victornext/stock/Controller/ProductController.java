@@ -5,25 +5,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import victornext.stock.Controller.DTOS.EnterprisesDTO;
-import victornext.stock.Controller.DTOS.FindEnterpriseDTO;
 import victornext.stock.Controller.DTOS.ProductDTO;
-import victornext.stock.Controller.Mappers.ProductMapper;
-import victornext.stock.Model.EnterprisesModel;
 import victornext.stock.Services.ProductService;
 import victornext.stock.Model.ProductModel;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/product")
