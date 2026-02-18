@@ -38,8 +38,8 @@ public class EnterprisesService {
 
 
 
-    public ResponseEntity<List<EnterprisesModel>> findAll(){
-        return ResponseEntity.status(HttpStatus.OK).body(repository.findAll());
+    public Page<EnterprisesModel> findAll(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
 

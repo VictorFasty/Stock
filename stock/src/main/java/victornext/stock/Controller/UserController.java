@@ -6,15 +6,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import victornext.stock.Controller.DTOS.UserDTO;
-import victornext.stock.Controller.Mappers.UserMapper;
 import victornext.stock.Model.UserModel;
 import victornext.stock.Services.UserService;
-
-import java.util.List;
 
 
 @Tag(name = "User Controller")
@@ -36,12 +35,8 @@ public class UserController {
             @ApiResponse(responseCode = "409", description = "Conflict: user already exists")
     })
     @PostMapping("/create")
-    public ResponseEntity<UserDTO> create(@RequestBody @Valid UserDTO dto) {
-        // 1. Chama o serviço
-        UserDTO createdUser = service.create(dto);
-
-        // 2. Retorna o status 201 (Created) e o corpo
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+    public ResponseEntity<?> create(@RequestBody @Valid UserDTO dto) {
+        return service.create(dto);
     }
 
 
@@ -54,9 +49,10 @@ public class UserController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "List of users retrieved successfully")
     })
-    @GetMapping(value = "/findall")
-    public ResponseEntity<List<UserModel>> findAll() {
-        return service.findALl();
+    @GetMapping("/findAll")
+    public ResponseEntity<Page<UserModel>> findAll(
+            @PageableDefault(page = 0, size = 10, sort = "id") Pageable pageable) {
+        return service.findALl(pageable);
     }
 
 

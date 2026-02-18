@@ -8,6 +8,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -60,13 +63,11 @@ public class EnterprisesController {
 
 
     // ---------------------- FIND ALL ----------------------
-    @Operation(summary = "Find all enterprises", description = "Returns a list of all enterprises")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Enterprises retrieved successfully")
-    })
+    @Operation(summary = "Find all enterprises", description = "Returns a paginated list of all enterprises")
     @GetMapping(value = "/findall")
-    public ResponseEntity<List<EnterprisesModel>> findall() {
-        return service.findAll();
+    public ResponseEntity<Page<EnterprisesModel>> findAll(
+            @PageableDefault(page = 0, size = 10, sort = "id") Pageable pageable) {
+        return ResponseEntity.ok(service.findAll(pageable));
     }
 
 

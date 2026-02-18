@@ -1,6 +1,8 @@
 package victornext.stock.Services;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,20 +23,16 @@ public class UserService {
     private final PasswordEncoder encoder;
     private final UserMapper mapper;
 
-    public UserDTO create(UserDTO dto) {
+    public ResponseEntity<?> create(UserDTO dto) {
+        UserModel modelSaved = mapper.toEntity(dto);
 
-        UserModel model = mapper.toEntity(dto);
-
-
-        if(repository.existsByLoginAndEmail(model.getLogin(), model.getEmail())){
+        if(repository.existsByLoginAndEmail(modelSaved.getLogin(), modelSaved.getEmail())){
             throw new DuplicatedException("Usuario Ja Existente");
         }
 
+        repository.save(modelSaved);
 
-        model.setPassword(encoder.encode(model.getPassword()));
-
-        UserModel savedUser = repository.save(model);
-        return mapper.toDto(savedUser);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     public ResponseEntity<?> update(UserModel user) {
@@ -70,8 +68,8 @@ public class UserService {
         return repository.findByEmail(email);
     }
 
-    public ResponseEntity<List<UserModel>> findALl() {
-        return ResponseEntity.status(HttpStatus.OK).body(repository.findAll());
+    public ResponseEntity<Page<UserModel>> findALl(Pageable pageable) {
+        return ResponseEntity.ok(repository.findAll(pageable));
     }
 
 

@@ -100,4 +100,8 @@ public class ProductService {
         model.setQuantity(model.getQuantity() - quantity);
         return mapper.toDTO(repository.save(model));
     }
+
+    public Page<ProductModel> findAll(Pageable pageable) {
+        return repository.findAll(pageable);
+    }
 }
