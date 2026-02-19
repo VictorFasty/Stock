@@ -24,7 +24,6 @@ import org.springframework.security.oauth2.server.authorization.settings.TokenSe
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
-import victornext.stock.Security.CustomAuthentication;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
