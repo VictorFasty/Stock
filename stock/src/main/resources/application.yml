@@ -23,6 +23,18 @@ spring:
       hibernate:
         format_sql: true
 
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:seu-id-aqui}
+            client-secret: ${GOOGLE_CLIENT_SECRET:seu-secret-aqui}
+            scope:
+              - email
+              - profile
+
   mail:
     host: smtp.gmail.com
     port: 587
@@ -39,8 +51,8 @@ alert:
   recipient:
     email: ${ALERT_RECIPIENT_EMAIL}
 
-# Configuração do nosso JWT
+
 api:
   security:
     token:
-      secret: ${JWT_SECRET:api.security.token.secret}
+      secret: ${JWT_SECRET:minha-chave-secreta-muito-forte-e-longa-123456}
