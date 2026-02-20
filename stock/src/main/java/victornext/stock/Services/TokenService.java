@@ -19,7 +19,7 @@ public class TokenService {
     @Value("${api.security.token.secret}");
     private String secret;
 
-    private String generatedToken(User user){
+    public String generatedToken(User user){
         Algorithm algorithm = Algorithm.HMAC256(secret);
         return JWT.create()
                 .withIssuer("auth-api")
