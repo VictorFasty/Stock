@@ -23,26 +23,6 @@ spring:
       hibernate:
         format_sql: true
 
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: ${GOOGLE_CLIENT_ID}
-            client-secret: ${GOOGLE_CLIENT_SECRET}
-            scope:
-              - openid
-              - profile
-              - email
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-            client-name: Google
-        provider:
-          google:
-            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
-            token-uri: https://oauth2.googleapis.com/token
-            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
-            user-name-attribute: sub
-
   mail:
     host: smtp.gmail.com
     port: 587
@@ -58,3 +38,9 @@ spring:
 alert:
   recipient:
     email: ${ALERT_RECIPIENT_EMAIL}
+
+# Configuração do nosso JWT
+api:
+  security:
+    token:
+      secret: ${JWT_SECRET:api.security.token.secret}
