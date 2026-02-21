@@ -90,9 +90,3 @@ Abaixo estão as principais rotas. Para detalhes dos payloads, consulte o Swagge
 | `POST` | `/clients` | Cria Client OAuth2 (Admin Only) |
 | `GET` | `/login` | Página de Login (HTML) |
 
-## 🤝 Contribuição
-
-1.  Faça um Fork.
-2.  Crie uma Branch (`git checkout -b feature/NovaFeature`).
-3.  Commit suas mudanças.
-4.  Abra um Pull Request.
